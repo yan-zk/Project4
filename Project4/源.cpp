@@ -8,14 +8,14 @@
 #include <windows.h>
 #include<mmsystem.h>
 #pragma comment(lib,"winmm.lib")
-//»®·Ö5*4¸öÇøÓòÉú³ÉµĞÈË
+//åˆ’åˆ†5*4ä¸ªåŒºåŸŸç”Ÿæˆæ•Œäºº
 #define AREA_WIDTH (WIDTH / 5)  
 #define AREA_HEIGHT ((HEIGHT - 100) / 4)  
 #define AREA_COLS 5  
 #define AREA_ROWS 4
 
 ExMessage msg = { 0 };
-//ÓÎÏ·×´Ì¬
+//æ¸¸æˆçŠ¶æ€
 enum GameStatus
 {
 	GameReady,
@@ -26,20 +26,20 @@ enum GameStatus
 };
 GameStatus status = GameReady;
 bool keyStates[256];
-//¶¨Òå³£Á¿
+//å®šä¹‰å¸¸é‡
 enum My {
-	WIDTH = 1600, HEIGHT = 900,//Ö÷½çÃæ¿í¸ß
-	BULLET_NUM = 30,//1ĞÍ×Óµ¯ÊıÁ¿
+	WIDTH = 1600, HEIGHT = 900,//ä¸»ç•Œé¢å®½é«˜
+	BULLET_NUM = 30,//1å‹å­å¼¹æ•°é‡
 	BULLET2_NUM = 30,
-	SHIP_SPEED = 10, BULLET_SPEED = 20,//·É»úÓë×Óµ¯ËÙ¶È
-	BIG, SMALL, ENEMY_NUM = 5, ENEMY_SPEED = 3, ENEMY_BulletNUM = 5, ENEMYbullet_SPEED = 6,//µĞ»úÊıÁ¿ÓëËÙ¶È
-	invisble_time = 2000//Íæ¼ÒÊÜ»÷ºóµÄÎŞµĞÊ±¼ä
+	SHIP_SPEED = 10, BULLET_SPEED = 20,//é£æœºä¸å­å¼¹é€Ÿåº¦
+	BIG, SMALL, ENEMY_NUM = 5, ENEMY_SPEED = 3, ENEMY_BulletNUM = 5, ENEMYbullet_SPEED = 6,//æ•Œæœºæ•°é‡ä¸é€Ÿåº¦
+	invisble_time = 2000//ç©å®¶å—å‡»åçš„æ— æ•Œæ—¶é—´
 };
-double gravity = 1;//¶¨ÒåÖØÁ¦
+double gravity = 1;//å®šä¹‰é‡åŠ›
 
 
 
-//Í¼Æ¬½á¹¹Ìå
+//å›¾ç‰‡ç»“æ„ä½“
 struct image {
 	IMAGE img_background;
 	IMAGE img_myplane[2];
@@ -52,30 +52,30 @@ struct image {
 IMAGE airplane[4];
 
 
-//·É»ú²ÎÊı
+//é£æœºå‚æ•°
 struct plane {
 	int x;
-	int y;//×ø±ê
+	int y;//åæ ‡
 	int vx;
 	int vy;
-	bool live;//ÅĞ¶ÏÊÇ·ñ´æ»î
+	bool live;//åˆ¤æ–­æ˜¯å¦å­˜æ´»
 	int hp;
 	int type;
 	int width;
-	int height;//·É»ú¿í¸ß
-	int bullettype;//×Óµ¯ÀàĞÍ
+	int height;//é£æœºå®½é«˜
+	int bullettype;//å­å¼¹ç±»å‹
 };
 int score = 0;
 int index = 0;
 int flag_laser[ENEMY_NUM] = { 0 };
-DWORD t_laser[ENEMY_NUM];//¼ÇÂ¼¼¤¹âÊ±¼ä¼ä¸ô
-DWORD t_bullet1 = 0;//¼ÇÂ¼×Óµ¯1¼ä¸ô
-DWORD t_bullet2 = 0;//¼ÇÂ¼×Óµ¯2¼ä¸ô
-DWORD t_change = 0;//¼ÇÂ¼×ª»»ÎäÆ÷¼ä¸ô
-DWORD t_collision = 0;//Åö×²Ê±¼ä¼ä¸ô
-DWORD bullet_stop = 0;//ÇĞ»»×Óµ¯ºóÔÙ·¢Éä×Óµ¯µÄ¼ä¸ô
-int t_playeracg = 0;//Ö÷½Ç¶¯»­²¥·ÅÊ±¼ä
-DWORD t_boom = 0;//µĞÈËËÀÍöÒôĞ§¼ä¸ô
+DWORD t_laser[ENEMY_NUM];//è®°å½•æ¿€å…‰æ—¶é—´é—´éš”
+DWORD t_bullet1 = 0;//è®°å½•å­å¼¹1é—´éš”
+DWORD t_bullet2 = 0;//è®°å½•å­å¼¹2é—´éš”
+DWORD t_change = 0;//è®°å½•è½¬æ¢æ­¦å™¨é—´éš”
+DWORD t_collision = 0;//ç¢°æ’æ—¶é—´é—´éš”
+DWORD bullet_stop = 0;//åˆ‡æ¢å­å¼¹åå†å‘å°„å­å¼¹çš„é—´éš”
+int t_playeracg = 0;//ä¸»è§’åŠ¨ç”»æ’­æ”¾æ—¶é—´
+DWORD t_boom = 0;//æ•Œäººæ­»äº¡éŸ³æ•ˆé—´éš”
 
 
 
@@ -89,26 +89,26 @@ struct plane enemy[ENEMY_NUM];
 struct plane enemyBullet[ENEMY_NUM][ENEMY_BulletNUM];
 struct plane enemy_laser[ENEMY_NUM];
 
-void Load();//¼ÓÔØÍ¼Æ¬
-void init_game();//³õÊ¼»¯ÓÎÏ·
-void draw_game();//»æÖÆÓÎÏ·
-void playeracg();//Ö÷½Ç¶¯»­²¿·Ö
+void Load();//åŠ è½½å›¾ç‰‡
+void init_game();//åˆå§‹åŒ–æ¸¸æˆ
+void draw_game();//ç»˜åˆ¶æ¸¸æˆ
+void playeracg();//ä¸»è§’åŠ¨ç”»éƒ¨åˆ†
 void plane_move();
-void create_bullet();//´´½¨×Óµ¯
+void create_bullet();//åˆ›å»ºå­å¼¹
 void create_bullet1();
 void create_bullet2();
-void create_enemy();//´´½¨µĞÈË
-void create_enemyBullet();//´´½¨µĞÈË×Óµ¯
-void create_laser();//´´½¨¼¤¹â
-void draw_laser();//»æÖÆ¼¤¹â
-bool time(int ms, int id);//¼ÆÊ±Æ÷
-void shootplane();//Éä»÷
-void collision();//Åö×²ÅĞ¶¨
+void create_enemy();//åˆ›å»ºæ•Œäºº
+void create_enemyBullet();//åˆ›å»ºæ•Œäººå­å¼¹
+void create_laser();//åˆ›å»ºæ¿€å…‰
+void draw_laser();//ç»˜åˆ¶æ¿€å…‰
+bool time(int ms, int id);//è®¡æ—¶å™¨
+void shootplane();//å°„å‡»
+void collision();//ç¢°æ’åˆ¤å®š
 
 void  drawAlpha(IMAGE* picture, int  picture_x, int picture_y);
-DWORD WINAPI MusicThread(LPVOID lpParam);//½¨Á¢¶àÏß³Ì
-void music(char c[100]);//²¥·ÅÒôĞ§
-void openmusic();//Ô¤ÏÈ´ò¿ªÒôÀÖ
+DWORD WINAPI MusicThread(LPVOID lpParam);//å»ºç«‹å¤šçº¿ç¨‹
+void music(char c[100]);//æ’­æ”¾éŸ³æ•ˆ
+void openmusic();//é¢„å…ˆæ‰“å¼€éŸ³ä¹
 
 
 int main()
@@ -167,7 +167,7 @@ int main()
 	system("pause");
 }
 
-//¼ÓÔØÍ¼Æ¬
+//åŠ è½½å›¾ç‰‡
 void Load()
 {
 	loadimage(&picture.img_background, "image\\Background_1.png", 1600, 900);
@@ -185,8 +185,8 @@ void Load()
 	loadimage(&picture.img_enemyBullet[1][1], "image/bigenemy_bullet2.jpg", 40, 20);
 	loadimage(&picture.img_laser[0], "image/laser1.jpg");
 	loadimage(&picture.img_laser[1], "image/laser2.jpg");
-	//Ö÷½Ç¶¯»­
-	char airplaneimage[64];	//¶¨ÒåÊı×é£¬½«Í¼Æ¬µÄµØÖ·Ğ´Èëµ½Êı×é
+	//ä¸»è§’åŠ¨ç”»
+	char airplaneimage[64];	//å®šä¹‰æ•°ç»„ï¼Œå°†å›¾ç‰‡çš„åœ°å€å†™å…¥åˆ°æ•°ç»„
 	loadimage(&airplane[0], "image\\3.png");
 	loadimage(&airplane[1], "image\\4.png");
 	loadimage(&airplane[2], "image\\5.png");
@@ -196,14 +196,14 @@ void Load()
 
 }
 
-//³õÊ¼»¯ÓÎÏ·
+//åˆå§‹åŒ–æ¸¸æˆ
 void init_game()
 {
 	
 
 	Load();
 	score = 0;
-	//ÉèÖÃ·É»úÏà¹Ø²ÎÊı
+	//è®¾ç½®é£æœºç›¸å…³å‚æ•°
 	myplane.width = 158;
 	myplane.height = 111;
 	myplane.hp = 10;
@@ -214,7 +214,7 @@ void init_game()
 	myplane.live = true;
 	myplane.bullettype = 1;
 
-	//³õÊ¼»¯×Óµ¯1
+	//åˆå§‹åŒ–å­å¼¹1
 	for (int i = 0; i < BULLET_NUM; i++)
 	{
 		bullet[i].width = 30;
@@ -226,7 +226,7 @@ void init_game()
 		bullet[i].live = false;
 	}
 
-	//³õÊ¼»¯×Óµ¯2
+	//åˆå§‹åŒ–å­å¼¹2
 	for (int i = 0; i < BULLET2_NUM; i++)
 	{
 		bullet2[i].width = 30;
@@ -238,7 +238,7 @@ void init_game()
 		bullet2[i].live = false;
 	}
 
-	//³õÊ¼»¯µĞÈË
+	//åˆå§‹åŒ–æ•Œäºº
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		enemy[i].x = 0;
@@ -246,7 +246,7 @@ void init_game()
 		enemy[i].live = false;
 	}
 
-	//³õÊ¼»¯µĞÈË×Óµ¯
+	//åˆå§‹åŒ–æ•Œäººå­å¼¹
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		for (int j = 0; j < ENEMY_BulletNUM; j++)
@@ -257,7 +257,7 @@ void init_game()
 		}
 	}
 
-	//¼¤¹â³õÊ¼»¯
+	//æ¿€å…‰åˆå§‹åŒ–
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		enemy_laser[i].width = 512;
@@ -266,7 +266,7 @@ void init_game()
 	}
 }
 
-//ÅĞ¶Ï×ø±êÊÇ·ñÔÚ¾ØĞÎÖĞ
+//åˆ¤æ–­åæ ‡æ˜¯å¦åœ¨çŸ©å½¢ä¸­
 bool inArea(int mx, int my, int x, int y, int w, int h)
 {
 	if (mx > x && mx<x + w && my>y && my < y + h)
@@ -274,7 +274,7 @@ bool inArea(int mx, int my, int x, int y, int w, int h)
 	return false;
 }
 
-//°´Å¥£¨¿ÉÒÔ±äÉ«£©
+//æŒ‰é’®ï¼ˆå¯ä»¥å˜è‰²ï¼‰
 bool button(int x, int y, int w, int h, const char* text)
 {
 	if (inArea(msg.x, msg.y, x, y, w, h))
@@ -289,7 +289,7 @@ bool button(int x, int y, int w, int h, const char* text)
 	setlinecolor(BLACK);
 	fillroundrect(x, y, x + w, y + h, 5, 5);
 	settextcolor(BLACK);
-	settextstyle(30, 0, "Î¢ÈíÑÅºÚ");
+	settextstyle(30, 0, "å¾®è½¯é›…é»‘");
 	int wSpace = (w - textwidth(text)) / 2;
 	int hSpace = (h - textheight(text)) / 2;
 	outtextxy(x + wSpace, y + hSpace, text);
@@ -301,20 +301,20 @@ bool button(int x, int y, int w, int h, const char* text)
 	return false;
 }
 
-//°´Å¥£¨´¿ÎÄ±¾£©
+//æŒ‰é’®ï¼ˆçº¯æ–‡æœ¬ï¼‰
 void button2(int x, int y, int w, int h, const char* text)
 {
 	setfillcolor(RGB(57, 214, 255));
 	setlinecolor(BLACK);
 	fillroundrect(x, y, x + w, y + h, 5, 5);
 	settextcolor(BLACK);
-	settextstyle(30, 0, "Î¢ÈíÑÅºÚ");
+	settextstyle(30, 0, "å¾®è½¯é›…é»‘");
 	int wSpace = (w - textwidth(text)) / 2;
 	int hSpace = (h - textheight(text)) / 2;
 	outtextxy(x + wSpace, y + hSpace, text);
 }
 
-//»æÖÆÓÎÏ·
+//ç»˜åˆ¶æ¸¸æˆ
 void draw_game()
 {
 
@@ -395,17 +395,17 @@ void draw_game()
 	else if (status == GamePause)
 	{
 		int bx = (getwidth() - 250) / 2;
-		if (button(bx, 400, 250, 50, "ÖØĞÂ¿ªÊ¼"))
+		if (button(bx, 400, 250, 50, "é‡æ–°å¼€å§‹"))
 		{
 			init_game();
 			status = GameRunning;
 		}
-		if (button(bx, 500, 250, 50, "·µ»ØÖ÷²Ëµ¥"))
+		if (button(bx, 500, 250, 50, "è¿”å›ä¸»èœå•"))
 		{
 			init_game();
 			status = GameReady;
 		}
-		if (button(bx, 600, 250, 50, "½áÊøÓÎÏ·"))
+		if (button(bx, 600, 250, 50, "ç»“æŸæ¸¸æˆ"))
 			exit(0);
 	}
 	else
@@ -416,28 +416,28 @@ void draw_game()
 			setlinecolor(BLACK);
 			fillroundrect((getwidth() - 800) / 2, 100, (getwidth() - 800) / 2 + 800, 100 + 200, 5, 5);
 			settextcolor(LIGHTRED);
-			settextstyle(100, 0, "Î¢ÈíÑÅºÚ");
+			settextstyle(100, 0, "å¾®è½¯é›…é»‘");
 			int wSpace = (800 - textwidth("YOU DEAD!")) / 2;
 			int hSpace = (200 - textheight("YOU DEAD!")) / 2;
 			outtextxy((getwidth() - 800) / 2 + wSpace, 100 + hSpace, "YOU DEAD!");
 		}
 
-		if (button(bx, 400, 250, 50, "ÖØĞÂ¿ªÊ¼"))
+		if (button(bx, 400, 250, 50, "é‡æ–°å¼€å§‹"))
 		{
 			init_game();
 			status = GameRunning;
 		}
-		if (button(bx, 500, 250, 50, "·µ»ØÖ÷²Ëµ¥"))
+		if (button(bx, 500, 250, 50, "è¿”å›ä¸»èœå•"))
 		{
 			init_game();
 			status = GameReady;
 		}
-		if (button(bx, 600, 250, 50, "½áÊøÓÎÏ·"))
+		if (button(bx, 600, 250, 50, "ç»“æŸæ¸¸æˆ"))
 			exit(0);
 	}
 }
 
-//»æÖÆ¼¤¹â
+//ç»˜åˆ¶æ¿€å…‰
 void draw_laser()
 {
 	if (status == GameRunning)
@@ -469,13 +469,13 @@ void draw_laser()
 		}
 }
 
-//1 Íæ¼ÒÒÆ¶¯£º2 ×Óµ¯Î»ÖÃ¸üĞÂ£º 3µĞÈËÎ»ÖÃ¸üĞÂ
+//1 ç©å®¶ç§»åŠ¨ï¼š2 å­å¼¹ä½ç½®æ›´æ–°ï¼š 3æ•Œäººä½ç½®æ›´æ–°
 void plane_move()
 {
 	if (status != GameRunning)
 		return;
 
-	//Íæ¼ÒÎ»ÖÃ¸üĞÂ
+	//ç©å®¶ä½ç½®æ›´æ–°
 	myplane.x += SHIP_SPEED * myplane.vx;
 	myplane.y += SHIP_SPEED * myplane.vy;
 	if (myplane.x >= WIDTH - myplane.width)
@@ -525,7 +525,7 @@ void plane_move()
 		create_bullet2();
 	}
 
-	//×Óµ¯1Î»ÖÃ¸üĞÂ
+	//å­å¼¹1ä½ç½®æ›´æ–°
 	for (int i = 0; i < BULLET_NUM; i++)
 	{
 		if (bullet[i].live)
@@ -535,7 +535,7 @@ void plane_move()
 		if (bullet[i].x > WIDTH)
 			bullet[i].live = false;
 	}
-	//×Óµ¯2Î»ÖÃ¸üĞÂ
+	//å­å¼¹2ä½ç½®æ›´æ–°
 	for (int i = 0; i < BULLET2_NUM; i++)
 	{
 		if (bullet2[i].live)
@@ -548,7 +548,7 @@ void plane_move()
 			bullet2[i].live = false;
 	}
 
-	//µĞ»úÎ»ÖÃ¸üĞÂ
+	//æ•Œæœºä½ç½®æ›´æ–°
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		if (enemy[i].live) {
@@ -562,7 +562,7 @@ void plane_move()
 		}
 	}
 
-	//µĞ»ú×Óµ¯¸üĞÂ
+	//æ•Œæœºå­å¼¹æ›´æ–°
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		for (int j = 0; j < ENEMY_BulletNUM; j++)
@@ -579,10 +579,10 @@ void plane_move()
 	}
 }
 
-//´´½¨×Óµ¯
+//åˆ›å»ºå­å¼¹
 void create_bullet1()
 {
-	DWORD currentTime = GetTickCount(); // »ñÈ¡µ±Ç°Ê±¼ä£¨ÒÔºÁÃëÎªµ¥Î»£©
+	DWORD currentTime = GetTickCount(); // è·å–å½“å‰æ—¶é—´ï¼ˆä»¥æ¯«ç§’ä¸ºå•ä½ï¼‰
 	if (currentTime - t_bullet1 > 100)
 	{
 		for (int i = 0; i < BULLET_NUM; i++)
@@ -601,7 +601,7 @@ void create_bullet1()
 }
 void create_bullet2()
 {
-	DWORD currentTime = GetTickCount(); // »ñÈ¡µ±Ç°Ê±¼ä£¨ÒÔºÁÃëÎªµ¥Î»£©
+	DWORD currentTime = GetTickCount(); // è·å–å½“å‰æ—¶é—´ï¼ˆä»¥æ¯«ç§’ä¸ºå•ä½ï¼‰
 
 
 	if (currentTime - t_bullet2 > 1000)
@@ -643,8 +643,8 @@ void create_bullet()
 }
 
 
-//´´½¨µĞÈË
-//´´½¨µĞÈË
+//åˆ›å»ºæ•Œäºº
+//åˆ›å»ºæ•Œäºº
 void create_enemy()
 {
 	if (status != GameRunning)
@@ -666,18 +666,18 @@ void create_enemy()
 				enemy[i].width = 80;
 				enemy[i].height = 50;
 			}
-			int area_x = rand() % AREA_COLS;  // Ëæ»úÑ¡ÔñºáÏòÇøÓò
-			int area_y = rand() % AREA_ROWS;  // Ëæ»úÑ¡Ôñ×İÏòÇøÓò
-			enemy[i].x = area_x * AREA_WIDTH + rand() % AREA_WIDTH;  // ÔÚÑ¡¶¨ÇøÓòÄÚÉú³Éx×ø±ê
-			enemy[i].y = area_y * AREA_HEIGHT + rand() % AREA_HEIGHT;  // ÔÚÑ¡¶¨ÇøÓòÄÚÉú³Éy×ø±ê
-			if (enemy[i].x > WIDTH / 3 * 1)//±£Ö¤µĞ»úÉú³ÉÔÚÓÒ±ß
+			int area_x = rand() % AREA_COLS;  // éšæœºé€‰æ‹©æ¨ªå‘åŒºåŸŸ
+			int area_y = rand() % AREA_ROWS;  // éšæœºé€‰æ‹©çºµå‘åŒºåŸŸ
+			enemy[i].x = area_x * AREA_WIDTH + rand() % AREA_WIDTH;  // åœ¨é€‰å®šåŒºåŸŸå†…ç”Ÿæˆxåæ ‡
+			enemy[i].y = area_y * AREA_HEIGHT + rand() % AREA_HEIGHT;  // åœ¨é€‰å®šåŒºåŸŸå†…ç”Ÿæˆyåæ ‡
+			if (enemy[i].x > WIDTH / 3 * 1)//ä¿è¯æ•Œæœºç”Ÿæˆåœ¨å³è¾¹
 				enemy[i].live = true;
 			break;
 		}
 	}
 }
 
-//´´½¨µĞÈË×Óµ¯
+//åˆ›å»ºæ•Œäººå­å¼¹
 void create_enemyBullet()
 {
 	for (int i = 0; i < ENEMY_NUM; i++)
@@ -698,7 +698,7 @@ void create_enemyBullet()
 	}
 }
 
-//´´½¨µĞÈË¼¤¹â
+//åˆ›å»ºæ•Œäººæ¿€å…‰
 void create_laser()
 {
 	for (int i = 0; i < ENEMY_NUM; i++)
@@ -713,7 +713,7 @@ void create_laser()
 	}
 }
 
-//¼ÆÊ±Æ÷
+//è®¡æ—¶å™¨
 bool time(int ms, int id)
 {
 	static DWORD t[10];
@@ -725,7 +725,7 @@ bool time(int ms, int id)
 	return false;
 }
 
-//Åö×²¼ì²â
+//ç¢°æ’æ£€æµ‹
 bool check_crash(struct plane a, struct plane b)
 {
 	if (a.x + a.width > b.x && a.x < b.x + b.width && a.y<b.y + b.height && a.y + a.height>b.y)
@@ -864,39 +864,39 @@ void collision()
 			status = GameOver;
 	}
 }
-//// ÔØÈëPNGÍ¼²¢È¥Í¸Ã÷²¿·Ö
-void drawAlpha(IMAGE* picture, int  picture_x, int picture_y) //xÎªÔØÈëÍ¼Æ¬µÄX×ø±ê£¬yÎªY×ø±ê
+//// è½½å…¥PNGå›¾å¹¶å»é€æ˜éƒ¨åˆ†
+void drawAlpha(IMAGE* picture, int  picture_x, int picture_y) //xä¸ºè½½å…¥å›¾ç‰‡çš„Xåæ ‡ï¼Œyä¸ºYåæ ‡
 {
 
-	// ±äÁ¿³õÊ¼»¯
-	DWORD* dst = GetImageBuffer();    // GetImageBuffer()º¯Êı£¬ÓÃÓÚ»ñÈ¡»æÍ¼Éè±¸µÄÏÔ´æÖ¸Õë£¬EASYX×Ô´ø
+	// å˜é‡åˆå§‹åŒ–
+	DWORD* dst = GetImageBuffer();    // GetImageBuffer()å‡½æ•°ï¼Œç”¨äºè·å–ç»˜å›¾è®¾å¤‡çš„æ˜¾å­˜æŒ‡é’ˆï¼ŒEASYXè‡ªå¸¦
 	DWORD* draw = GetImageBuffer();
-	DWORD* src = GetImageBuffer(picture); //»ñÈ¡pictureµÄÏÔ´æÖ¸Õë
-	int picture_width = picture->getwidth(); //»ñÈ¡pictureµÄ¿í¶È£¬EASYX×Ô´ø
-	int picture_height = picture->getheight(); //»ñÈ¡pictureµÄ¸ß¶È£¬EASYX×Ô´ø
-	int graphWidth = getwidth();       //»ñÈ¡»æÍ¼ÇøµÄ¿í¶È£¬EASYX×Ô´ø
-	int graphHeight = getheight();     //»ñÈ¡»æÍ¼ÇøµÄ¸ß¶È£¬EASYX×Ô´ø
-	int dstX = 0;    //ÔÚÏÔ´æÀïÏñËØµÄ½Ç±ê
+	DWORD* src = GetImageBuffer(picture); //è·å–pictureçš„æ˜¾å­˜æŒ‡é’ˆ
+	int picture_width = picture->getwidth(); //è·å–pictureçš„å®½åº¦ï¼ŒEASYXè‡ªå¸¦
+	int picture_height = picture->getheight(); //è·å–pictureçš„é«˜åº¦ï¼ŒEASYXè‡ªå¸¦
+	int graphWidth = getwidth();       //è·å–ç»˜å›¾åŒºçš„å®½åº¦ï¼ŒEASYXè‡ªå¸¦
+	int graphHeight = getheight();     //è·å–ç»˜å›¾åŒºçš„é«˜åº¦ï¼ŒEASYXè‡ªå¸¦
+	int dstX = 0;    //åœ¨æ˜¾å­˜é‡Œåƒç´ çš„è§’æ ‡
 
-	// ÊµÏÖÍ¸Ã÷ÌùÍ¼ ¹«Ê½£º Cp=¦Áp*FP+(1-¦Áp)*BP £¬ ±´Ò¶Ë¹¶¨ÀíÀ´½øĞĞµãÑÕÉ«µÄ¸ÅÂÊ¼ÆËã
+	// å®ç°é€æ˜è´´å›¾ å…¬å¼ï¼š Cp=Î±p*FP+(1-Î±p)*BP ï¼Œ è´å¶æ–¯å®šç†æ¥è¿›è¡Œç‚¹é¢œè‰²çš„æ¦‚ç‡è®¡ç®—
 	for (int iy = 0; iy < picture_height; iy++)
 	{
 		for (int ix = 0; ix < picture_width; ix++)
 		{
-			int srcX = ix + iy * picture_width; //ÔÚÏÔ´æÀïÏñËØµÄ½Ç±ê
-			int sa = ((src[srcX] & 0xff000000) >> 24); //0xAArrggbb;AAÊÇÍ¸Ã÷¶È
-			int sr = ((src[srcX] & 0xff0000) >> 16); //»ñÈ¡RGBÀïµÄR
+			int srcX = ix + iy * picture_width; //åœ¨æ˜¾å­˜é‡Œåƒç´ çš„è§’æ ‡
+			int sa = ((src[srcX] & 0xff000000) >> 24); //0xAArrggbb;AAæ˜¯é€æ˜åº¦
+			int sr = ((src[srcX] & 0xff0000) >> 16); //è·å–RGBé‡Œçš„R
 			int sg = ((src[srcX] & 0xff00) >> 8);   //G
 			int sb = src[srcX] & 0xff;              //B
 			if (ix >= 0 && ix <= graphWidth && iy >= 0 && iy <= graphHeight && dstX <= graphWidth * graphHeight)
 			{
-				dstX = (ix + picture_x) + (iy + picture_y) * graphWidth; //ÔÚÏÔ´æÀïÏñËØµÄ½Ç±ê
+				dstX = (ix + picture_x) + (iy + picture_y) * graphWidth; //åœ¨æ˜¾å­˜é‡Œåƒç´ çš„è§’æ ‡
 				int dr = ((dst[dstX] & 0xff0000) >> 16);
 				int dg = ((dst[dstX] & 0xff00) >> 8);
 				int db = dst[dstX] & 0xff;
-				draw[dstX] = ((sr * sa / 255 + dr * (255 - sa) / 255) << 16)  //¹«Ê½£º Cp=¦Áp*FP0x00007FF6033B63ED ´¦(Î»ÓÚ Project4.exe ÖĞ)Òı·¢µÄÒì³£: 0xC0000005: ¶ÁÈ¡Î»ÖÃ 0x000001941DF0F008 Ê±·¢Éú·ÃÎÊ³åÍ»¡£+(1-¦Áp)*BP  £» ¦Áp=sa/255 , FP=sr , BP=dr
-					| ((sg * sa / 255 + dg * (255 - sa) / 255) << 8)         //¦Áp=sa/255 , FP=sg , BP=dg
-					| (sb * sa / 255 + db * (255 - sa) / 255);              //¦Áp=sa/255 , FP=sb , BP=db
+				draw[dstX] = ((sr * sa / 255 + dr * (255 - sa) / 255) << 16)  //å…¬å¼ï¼š Cp=Î±p*FP0x00007FF6033B63ED å¤„(ä½äº Project4.exe ä¸­)å¼•å‘çš„å¼‚å¸¸: 0xC0000005: è¯»å–ä½ç½® 0x000001941DF0F008 æ—¶å‘ç”Ÿè®¿é—®å†²çªã€‚+(1-Î±p)*BP  ï¼› Î±p=sa/255 , FP=sr , BP=dr
+					| ((sg * sa / 255 + dg * (255 - sa) / 255) << 8)         //Î±p=sa/255 , FP=sg , BP=dg
+					| (sb * sa / 255 + db * (255 - sa) / 255);              //Î±p=sa/255 , FP=sb , BP=db
 			}
 		}
 	}
@@ -911,7 +911,7 @@ void playeracg()
 		t_playeracg = current_time;
 	}
 
-	drawAlpha(&airplane[i], myplane.x, myplane.y);//»æÖÆÍ¸Ã÷Í¼Æ¬
+	drawAlpha(&airplane[i], myplane.x, myplane.y);//ç»˜åˆ¶é€æ˜å›¾ç‰‡
 
 
 
@@ -921,17 +921,17 @@ DWORD WINAPI MusicThread(LPVOID lpParam)
 {
 	char* c = (char*)lpParam;
 	char command[200];
-	// Í£Ö¹µ±Ç°ÒôÆµ
+	// åœæ­¢å½“å‰éŸ³é¢‘
 	sprintf(command, "stop %s", c);
 	mciSendString(command, NULL, 0, NULL);
 
 
-	// ¹Ø±ÕÒôÆµÎÄ¼ş
+	// å…³é—­éŸ³é¢‘æ–‡ä»¶
 	sprintf(command, "close %s", c);
 	mciSendString(command, NULL, 0, NULL);
 
 
-	// ²¥·ÅÒôÆµÎÄ¼ş
+	// æ’­æ”¾éŸ³é¢‘æ–‡ä»¶
 	sprintf(command, "play %s", c);
 	mciSendString(command, NULL, 0, NULL);
 
@@ -945,7 +945,7 @@ void music(char c[100])
 	HANDLE hThread = CreateThread(NULL, 0, MusicThread, c, 0, NULL);
 	if (hThread != NULL)
 	{
-		// ¹Ø±ÕÏß³Ì¾ä±ú£¬ÈÃÏß³ÌÔÚºóÌ¨ÔËĞĞ
+		// å…³é—­çº¿ç¨‹å¥æŸ„ï¼Œè®©çº¿ç¨‹åœ¨åå°è¿è¡Œ
 		WaitForSingleObject(hThread, INFINITE);
 		CloseHandle(hThread);
 	}
@@ -956,4 +956,7 @@ void openmusic()
 	mciSendString("open voice\\bullet2.mp3", NULL, 0, NULL);
 	mciSendString("open voice\\1.mp3", NULL, 0, NULL);
 	mciSendString("open voice\\enemy_death.mp3", NULL, 0, NULL);
+
+
+	
 } 
